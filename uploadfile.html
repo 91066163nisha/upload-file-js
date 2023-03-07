@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+      integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Upload file Project</title>
+    <style>
+      .container {
+        border: 1px solid gray;
+        padding: 25px;
+        display: flex;
+        justify-content: flex-start
+      }
+
+      #submitBtn {
+        padding: 10px;
+        margin: 20px 0px;
+        font-size: 20px;
+        border-radius: 8px;
+      }
+
+      .text {
+        font-size: 28px;
+        font-weight: 600;
+        color: brown;
+      }
+
+      #fileUpload {
+        font-size: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <form id="formId">
+        <div>
+          <p class="text">Please Select your File here</p>
+          <input type="file" id="fileUpload" accept=".jpg ,.pdf, .png" multiple onchange="showPreview(event)">
+          <div class="preview">
+            <img id="file-ip-1-preview">
+          </div>
+          <div class="spinner-border text-primary hideSpinner" role="status">
+            <span class="visually-hidden"></span>
+          </div>
+        </div>
+        <div>
+          <button id="submitBtn">Upload</button>
+        </div>
+      </form>
+    </div>
+    <script>
+      function showPreview(event) {
+        if (event.target.files.length > 0) {
+          var src = URL.createObjectURL(event.target.files[0]);
+          var preview = document.getElementById("file-ip-1-preview");
+          preview.src = src;
+          preview.style.display = "block";
+        }
+      }
+      $(document).ready(function () {
+        $(".hideSpinner").hide();
+        const form = document.getElementById("formId");
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const userFile = document.getElementById("fileUpload").files;
+          const formData = new FormData();
+          for (let i = 0; i < userFile.length; i++) {
+            formData.append('userFile[]', userFile[i])
+            console.log(userFile[i])
+          }
+          $(".hideSpinner").show();
+
+          fetch("https://httpbin.org/post", {
+            method: "POST",
+            body: formData
+          })
+            .then(response => response.json())
+            .then(data => {
+              console.log(data)
+              $(".hideSpinner").hide();
+            })
+            .catch(err => console.log(err))
+        })
+      })
+
+      //*************** without using api **********************************
+      // $(document).ready(function () {
+      //   $(".hideSpinner").hide();
+      //   const form = document.getElementById("formId");
+      //   form.addEventListener('submit', function (e) {
+      //     e.preventDefault();
+      //     const userFile = document.getElementById("fileUpload").files;
+      //     const formData = new FormData();
+      //     for (let i = 0; i < userFile.length; i++) {
+      //       formData.append('userFile[]', userFile[i])
+      //       console.log(userFile[i])
+      //     }
+      //     $(".hideSpinner").show();
+      //     console.log(FormData)
+      //     $(".hideSpinner").hide();
+      //   })
+      // })
+    </script>
+  </body>
+
+</html>
